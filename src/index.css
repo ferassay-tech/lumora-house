@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+/*
+ * Lumora House — standalone brand stylesheet. Vite + React (no framework,
+ * no Higgsfield packages). Palette/type locked in design-brief.md.
+ */
+@theme {
+  --spacing: 0.25rem;
+  --radius: 0.625rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.625rem;
+  --radius-lg: 0.75rem;
+
+  --color-ivory: #fbf6ed;
+  --color-cream: #f6efe2;
+  --color-beige: #f1e9da;
+  --color-gold: #b99451;
+  --color-gold-deep: #9c7a3c;
+  --color-lavender: #c3b4d6;
+  --color-mauve: #c9a9ac;
+  --color-ink: #2c2420;
+  --color-ink-soft: #5c5147;
+  --color-ink-faint: #8a7d70;
+
+  --font-display: "Amiri", "Times New Roman", serif;
+  --font-body: "IBM Plex Sans Arabic", "Segoe UI", sans-serif;
+  --font-logotype: "Cormorant Garamond", serif;
+}
+
+@layer base {
+  html {
+    background-color: var(--color-ivory);
+    color: var(--color-ink);
+  }
+
+  body {
+    min-height: 100dvh;
+    background-color: var(--color-ivory);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+  }
+
+  * {
+    border-color: var(--color-beige);
+  }
+
+  ::selection {
+    background-color: var(--color-gold);
+    color: var(--color-ivory);
+  }
+}
+
+@layer utilities {
+  .font-logotype {
+    font-family: var(--font-logotype);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
