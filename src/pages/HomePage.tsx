@@ -36,12 +36,6 @@ function HeroSection() {
     <section className="relative overflow-hidden px-6 pb-24 pt-14 lg:px-10 lg:pb-32 lg:pt-20">
       {/* background watercolor plate, muted */}
       <div className="pointer-events-none absolute inset-0">
-        <img
-          src="/assets/hero.webp"
-          alt=""
-          className="absolute inset-0 h-full w-full object-cover opacity-[0.14]"
-          loading="eager"
-        />
         <div className="absolute inset-0 bg-gradient-to-b from-ivory via-ivory/95 to-ivory" />
       </div>
 
@@ -53,7 +47,7 @@ function HeroSection() {
               <div className="relative">
                 <div className="absolute -inset-10 -z-10 rounded-full bg-gold/10 blur-3xl" />
                 <img
-                  src="/assets/book-cutout.webp"
+                  src="/books/kuni-hajar/cover.webp"
                   alt="غلاف كتاب كوني هاجر الفاخر"
                   className="w-full max-w-md drop-shadow-[0_40px_60px_rgba(44,36,32,0.25)]"
                 />
@@ -133,7 +127,7 @@ function FeaturedBookSection() {
           <div className="relative overflow-hidden rounded-[10px] bg-gradient-to-br from-cream to-beige p-10">
             <CornerFlourish className="absolute right-4 top-4 h-14 w-14 text-gold/60" />
             <img
-              src="/assets/book-cutout.webp"
+              src="/books/kuni-hajar/cover.webp"
               alt="غلاف كوني هاجر"
               className="mx-auto w-full max-w-sm drop-shadow-2xl"
               loading="lazy"
