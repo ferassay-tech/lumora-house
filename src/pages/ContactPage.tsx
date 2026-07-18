@@ -5,6 +5,8 @@ import { Helmet } from "../components/Helmet";
 
 export default function ContactPage() {
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [form, setForm] = useState({ name: "", email: "", message: "" });
 
   return (
@@ -32,10 +34,38 @@ export default function ContactPage() {
               </div>
             ) : (
               <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  setSent(true);
-                }}
+                onSubmit={async (e) => {
+  e.preventDefault();
+
+  setLoading(true);
+  setError("");
+
+  try {
+    const response = await fetch("https://formspree.io/f/mlgqjkyr", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(form),
+    });
+
+    if (response.ok) {
+      setSent(true);
+      setForm({
+        name: "",
+        email: "",
+        message: "",
+      });
+    } else {
+      setError("حدث خطأ أثناء إرسال الرسالة، يرجى المحاولة مرة أخرى.");
+    }
+  } catch {
+    setError("تعذر الاتصال بالخادم.");
+  }
+
+  setLoading(false);
+}}
                 className="space-y-5 rounded-[10px] border border-beige bg-cream/40 p-8"
               >
                 <Field
@@ -62,14 +92,25 @@ export default function ContactPage() {
                     placeholder="اكتبي رسالتك هنا"
                   />
                 </div>
+                {error && (
+                <p className="rounded-[10px] bg-red-50 px-4 py-3 text-sm text-red-700">
+                 {error}
+                </p>
+                 )}
                 <button
                   type="submit"
+                  disabled={loading}
                   className="group relative inline-flex items-center gap-3 rounded-[10px] bg-gold px-8 py-4 text-base font-medium text-ink shadow-[0_10px_30px_-12px_rgba(185,148,81,0.55)] transition-all duration-200 ease-out hover:bg-gold-deep active:translate-y-[2px] active:scale-[0.98]"
                 >
-                  <span>إرسال الرسالة</span>
-                  <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-[-4px] rtl:group-hover:translate-x-[4px]">
-                    ←
-                  </span>
+                  <span>{loading ? "جاري الإرسال..." : "إرسال الرسالة"}</span>
+                  <span
+                   aria-hidden
+                   className={`transition-transform duration-300 ${
+                    loading ? "opacity-50" : "group-hover:translate-x-[-4px] rtl:group-hover:translate-x-[4px]"
+                  }`}
+                >
+                  ←
+               </span>
                 </button>
               </form>
             )}
