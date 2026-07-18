@@ -41,11 +41,14 @@ export default function BooksIndexPage() {
                   <p className="mt-1.5 text-sm text-ink-soft">{book.author}</p>
                   <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-ink-soft">{book.excerpt}</p>
                   <div className="mt-4 flex items-center justify-between border-t border-beige pt-4">
-                    <span className="text-sm text-ink">{book.price}</span>
-                    <span className="text-xs text-gold opacity-0 transition-opacity group-hover:opacity-100">
-                      عرض التفاصيل ←
-                    </span>
-                  </div>
+  <span className="text-sm text-ink">
+    {book.comingSoon ? "قريبًا" : book.price}
+  </span>
+
+  <span className="text-xs text-gold opacity-0 transition-opacity group-hover:opacity-100">
+    {book.comingSoon ? "اعرف المزيد ←" : "عرض التفاصيل ←"}
+  </span>
+</div>
                 </div>
               </Link>
             </Reveal>

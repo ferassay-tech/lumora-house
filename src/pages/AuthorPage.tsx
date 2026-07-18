@@ -38,8 +38,8 @@ export default function AuthorPage() {
       <section className="bg-cream px-6 py-20 lg:px-10 lg:py-24">
         <div className="mx-auto max-w-6xl">
           <Reveal className="text-center">
-            <p className="text-sm uppercase tracking-[0.25em] text-gold">مؤلفاتها</p>
-            <h2 className="mt-4 font-display text-3xl text-ink md:text-4xl">كتب {author.name}</h2>
+            <p className="text-sm uppercase tracking-[0.25em] text-gold">الإصدارات</p>
+            <h2 className="mt-4 font-display text-3xl text-ink md:text-4xl">أعمال {author.name}</h2>
           </Reveal>
           <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {author.books.map((bookSlug, i) => {
@@ -57,7 +57,9 @@ export default function AuthorPage() {
                     <div className="p-5 text-right">
                       <h3 className="font-display text-lg text-ink">{book.title}</h3>
                       <div className="mt-3">
-                        <UnderlineLink to={`/books/${book.slug}`}>عرض الكتاب</UnderlineLink>
+                        <UnderlineLink to={`/books/${book.slug}`}>
+  {book.comingSoon ? "ترقبوا قريبًا" : "عرض الكتاب"}
+</UnderlineLink>
                       </div>
                     </div>
                   </Link>

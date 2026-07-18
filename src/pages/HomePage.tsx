@@ -47,8 +47,8 @@ function HeroSection() {
               <div className="relative">
                 <div className="absolute -inset-10 -z-10 rounded-full bg-gold/10 blur-3xl" />
                 <img
-                  src="/books/kuni-hajar/cover.webp"
-                  alt="غلاف كتاب كوني هاجر الفاخر"
+  src={featuredBook.cover}
+  alt={featuredBook.title}
                   className="w-full max-w-md drop-shadow-[0_40px_60px_rgba(44,36,32,0.25)]"
                 />
               </div>
@@ -127,8 +127,8 @@ function FeaturedBookSection() {
           <div className="relative overflow-hidden rounded-[10px] bg-gradient-to-br from-cream to-beige p-10">
             <CornerFlourish className="absolute right-4 top-4 h-14 w-14 text-gold/60" />
             <img
-              src="/books/kuni-hajar/cover.webp"
-              alt="غلاف كوني هاجر"
+              src={featuredBook.cover}
+alt={featuredBook.title}
               className="mx-auto w-full max-w-sm drop-shadow-2xl"
               loading="lazy"
             />

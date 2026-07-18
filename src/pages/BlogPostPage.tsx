@@ -44,11 +44,15 @@ export default function BlogPostPage() {
             ))}
           </div>
 
-          <div className="mt-16 border-t border-beige pt-8 text-center">
-            <Link to="/blog" className="text-sm text-gold hover:underline">
-              العودة إلى المدونة
-            </Link>
-          </div>
+          <div className="mt-16 border-t border-beige pt-8 text-center space-y-4">
+  <Link to="/blog" className="block text-sm text-gold hover:underline">
+    العودة إلى المدونة
+  </Link>
+
+  <Link to="/books" className="block text-sm text-ink hover:text-gold transition-colors">
+    تصفح كتب دار لومورا
+  </Link>
+</div>
         </div>
       </article>
     </PageShell>

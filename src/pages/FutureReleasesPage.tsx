@@ -17,7 +17,7 @@ export default function FutureReleasesPage() {
       <PageHeader
         eyebrow="قريبًا"
         title="إصدارات قادمة"
-        description="نعمل باستمرار على كتب ودفاتر ومنتجات جديدة. إليك لمحة عمّا هو قادم من دار لومورا."
+        description="نعمل على إعداد إصدارات جديدة بعناية. تعرّفي على الكتب القادمة من دار لومورا قبل صدورها."
       />
 
       <section className="px-6 py-20 lg:px-10">

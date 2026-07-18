@@ -35,7 +35,7 @@ export default function SearchPage() {
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="ابحثي عن كتاب، مؤلفة، أو موضوع..."
+            placeholder="ابحثي عن كتاب، منتج، مقالة، أو موضوع..."
             className="w-full rounded-full border border-beige bg-cream/40 px-6 py-4 text-center text-ink placeholder:text-ink-faint focus:border-gold focus:outline-none"
           />
 

@@ -19,9 +19,9 @@ export default function ContactPage() {
       <section className="px-6 py-20 lg:px-10">
         <div className="mx-auto grid max-w-5xl grid-cols-1 gap-12 lg:grid-cols-[1fr_1.2fr]">
           <Reveal className="space-y-8">
-            <ContactInfo label="البريد الإلكتروني" value="hello@lumorahouse.com" />
+            <ContactInfo label="البريد الإلكتروني" value="lumora.m.house@gmail.com" />
             <ContactInfo label="ساعات الرد" value="من الأحد إلى الخميس، ٩ص - ٥م" />
-            <ContactInfo label="لاستفسارات النشر" value="authors@lumorahouse.com" />
+            <ContactInfo label="طريقة التواصل" value="يرجى استخدام نموذج التواصل أو البريد الإلكتروني." />
           </Reveal>
 
           <Reveal delay={0.1}>

@@ -51,14 +51,18 @@ export default function AboutPage() {
               الدار لنقدّم كتبًا رقمية فاخرة تصمَّم بعناية فائقة، من اختيار الكلمة إلى تفاصيل
               التصميم، لتكون كل قراءة تجربة تستحق وقتك.
             </p>
-            <p className="mt-4 max-w-lg text-balance leading-loose text-ink-soft">
-              نصدر كتبًا ودفاتر ومنتجات تعليمية تخاطب المرأة في كل مراحل حياتها: الأمومة، التطوير
-              الذاتي، الروحانية، والإلهام الإسلامي.
-            </p>
+           <p className="mt-4 max-w-lg text-balance leading-loose text-ink-soft">
+  نبني مكتبة رقمية تُعنى بالكتب والإصدارات الإبداعية والمنتجات الرقمية، حيث يلتقي المحتوى الهادف بالتصميم الراقي، لنقدم أعمالًا تترك أثرًا وترافق القارئ في مختلف مراحل رحلته.
+</p>
           </Reveal>
           <Reveal delay={0.15}>
             <div className="overflow-hidden rounded-[10px]">
-              <img src="/assets/book-linen.webp" alt="" className="h-full w-full object-cover" loading="lazy" />
+              <img
+  src="/assets/lumora-about.webp"
+  alt="دار لومورا للنشر والإصدارات الرقمية"
+  className="h-full w-full object-cover"
+  loading="lazy"
+/>
             </div>
           </Reveal>
         </div>
@@ -95,7 +99,9 @@ export default function AboutPage() {
         <Reveal>
           <h2 className="font-display text-3xl text-ink md:text-4xl">اكتشفي إصدارنا الأول</h2>
           <div className="mt-6 flex justify-center">
-            <UnderlineLink to="/books/kuni-hajar">كوني هاجر</UnderlineLink>
+            <UnderlineLink to="/books/kuni-hajar">
+  اكتشفي كتاب «كوني هاجر»
+</UnderlineLink>
           </div>
         </Reveal>
       </section>

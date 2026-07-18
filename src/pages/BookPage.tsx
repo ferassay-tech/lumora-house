@@ -157,7 +157,12 @@ function StorySection() {
 
         <Reveal delay={0.15} className="relative">
           <div className="relative overflow-hidden rounded-[10px]">
-            <img src="/assets/book-linen.webp" alt="" className="h-full w-full object-cover" loading="lazy" />
+            <img
+  src="/assets/kuni-hajar-collection.webp"
+  alt="مجموعة كتاب كوني هاجر وإصدارات دار لومورا"
+  className="h-full w-full object-cover"
+  loading="lazy"
+/>
           </div>
         </Reveal>
       </div>
@@ -265,9 +270,8 @@ function AuthorSection({ book }: { book: BookT }) {
           <p className="text-sm uppercase tracking-[0.25em] text-gold">عن المؤلفة</p>
           <h2 className="mt-4 font-display text-3xl text-ink md:text-4xl">{book.author}</h2>
           <p className="mt-5 max-w-2xl text-balance leading-loose text-ink-soft">
-            مها نصر كاتبة سعودية تكتب لصالح المرأة والأم العربية منذ أكثر من عشر سنوات، جمعت بين
-            خلفيتها في الإرشاد الأسري وشغفها بالسيرة النبوية لتقدّم كتابات تجمع بين الدفء والعمق.
-          </p>
+  مها نصر كاتبة فلسطينية من غزة، ومدربة في تنمية المرأة والأسرة. تهتم ببناء الوعي التربوي والنفسي، وتستلهم في كتاباتها القيم الإيمانية والتجارب الإنسانية الواقعية، لتقدم محتوى يجمع بين الدفء والعمق. ويأتي كتابها الأول «كوني هاجر» ليكون بداية رحلة أدبية تهدف إلى إلهام المرأة وبناء أثر يبقى.
+</p>
           <div className="mt-6 flex justify-center lg:justify-end">
             <UnderlineLink to={`/authors/${book.authorSlug}`}>اقرئي المزيد عن مها</UnderlineLink>
           </div>
@@ -304,16 +308,25 @@ function PurchaseSection({ book }: { book: BookT }) {
 function GuaranteeSection() {
   return (
     <section className="px-6 py-24 lg:px-10 lg:py-28">
-      <div className="mx-auto grid max-w-5xl grid-cols-1 items-center gap-10 lg:grid-cols-2">
+      <div className="mx-auto max-w-5xl grid grid-cols-1 gap-10 lg:grid-cols-2 items-center">
         <Reveal className="flex justify-center lg:justify-start">
-          <NumeralCTA numeral="٣٠" label="ضمان استرجاع كامل خلال ٣٠ يومًا" to="/faq" />
+          <NumeralCTA
+            numeral="✓"
+            label="تحميل فوري بعد الشراء"
+            to="/faq"
+          />
         </Reveal>
+
         <Reveal delay={0.1} className="text-center lg:text-right">
           <h2 className="font-display text-3xl leading-tight text-ink md:text-4xl">
-            نثق بأن هذا الكتاب سيلمس قلبك
+            تجربة شراء رقمية بسيطة وآمنة
           </h2>
-          <p className="mt-4 max-w-md text-balance leading-loose text-ink-soft lg:mr-0 lg:mr-auto">
-            إن لم تجدي فيه ما توقعتِه، نُعيد لك المبلغ كاملًا خلال ٣٠ يومًا من الشراء، دون أي أسئلة.
+
+          <p className="mt-4 max-w-md text-balance leading-loose text-ink-soft lg:mr-0 lg:ml-auto">
+            ستحصلين على نسخة رقمية عالية الجودة فور إتمام عملية الشراء،
+            مع إمكانية التواصل معنا عبر البريد الإلكتروني لأي استفسار أو
+            مساعدة، كما سنرسل لك أي تحديثات مستقبلية مجانية لهذا الإصدار
+            عند توفرها.
           </p>
         </Reveal>
       </div>
@@ -397,9 +410,15 @@ function SimpleBookPage({ book }: { book: BookT }) {
             <p className="mt-6 max-w-lg text-balance leading-loose text-ink-soft">{book.excerpt}</p>
             <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center lg:justify-end">
               {book.comingSoon ? (
-                <span className="rounded-[10px] border border-gold/40 px-6 py-3 text-sm text-gold">
-                  إصدار قادم — ترقّبيه قريبًا
-                </span>
+                <div className="rounded-[10px] border border-gold/30 bg-cream px-8 py-4 text-center">
+  <p className="font-display text-lg text-gold">
+    هذا الإصدار قيد الإعداد
+  </p>
+
+  <p className="mt-2 text-sm text-ink-soft">
+    نعمل عليه بعناية، وسيكون متاحًا قريبًا بإذن الله.
+  </p>
+</div>
               ) : (
                 <StampCTA href="#">اطلبي نسختك الآن</StampCTA>
               )}
