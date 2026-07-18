@@ -35,7 +35,12 @@ export default function BookPage() {
   if (!isFlagship) {
     return (
       <PageShell>
-        <Helmet title={`${book.title} — دار لومورا`} description={book.excerpt} />
+        <Helmet
+        title={`${book.title} — دار لومورا`}
+        description={book.excerpt}
+        image={`https://lumora-house-seven.vercel.app${book.cover}`}
+        url={`https://lumora-house-seven.vercel.app/books/${book.slug}`}
+/>
         <StructuredData json={BOOK_JSON_LD} />
         <SimpleBookPage book={book} />
       </PageShell>
@@ -44,7 +49,12 @@ export default function BookPage() {
 
   return (
     <PageShell>
-      <Helmet title={`${book.title} — دار لومورا`} description={book.excerpt} />
+      <Helmet
+  title={`${book.title} — دار لومورا`}
+  description={book.excerpt}
+  image={`https://lumora-house-seven.vercel.app${book.cover}`}
+  url={`https://lumora-house-seven.vercel.app/books/${book.slug}`}
+/>
       <StructuredData json={BOOK_JSON_LD} />
       <BookHero book={book} />
       <WhoForSection book={book} />
