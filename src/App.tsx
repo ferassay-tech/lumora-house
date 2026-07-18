@@ -13,10 +13,13 @@ import PrivacyPage from "./pages/PrivacyPage";
 import TermsPage from "./pages/TermsPage";
 import SearchPage from "./pages/SearchPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import ScrollToTop from "./components/ScrollToTop";
 
 export default function App() {
   return (
     <BrowserRouter>
+    <ScrollToTop />
+    
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/books" element={<BooksIndexPage />} />
