@@ -1,0 +1,5 @@
+User-agent: *
+
+Allow: /
+
+Sitemap: https://lumora-house-seven.vercel.app/sitemap.xml
