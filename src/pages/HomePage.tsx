@@ -2,9 +2,10 @@ import { Link } from "react-router-dom";
 import { PageShell } from "../components/page-shell";
 import { GoldDivider, CornerFlourish, QuoteMark, IconBook, IconHeart, IconOpenHands } from "../components/ornaments";
 import { StampCTA, UnderlineLink } from "../components/cta";
-import { Reveal, ParallaxLayer, CursorDrift } from "../components/motion-primitives";
+import {Reveal,ParallaxLayer,CursorDrift,Floating,MouseTilt,} from "../components/motion-primitives";
 import { books } from "../lib/content";
 import { StructuredData } from "../components/StructuredData";
+import PremiumBook3D from "../components/PremiumBook3D";
 
 const featuredBook = books.find((b) => b.featured)!;
 
@@ -43,17 +44,37 @@ function HeroSection() {
         {/* book cutout — bottom-left per brief's editorial-offset architecture */}
         <div className="relative order-2 flex justify-center lg:order-1 lg:justify-start">
           <ParallaxLayer speed={0.08} className="relative">
+           <Floating amplitude={8} duration={6}>
+            <MouseTilt>
             <CursorDrift strength={8}>
-              <div className="relative">
+             <div className="relative">
                 <div className="absolute -inset-10 -z-10 rounded-full bg-gold/10 blur-3xl" />
-                <img
-  src={featuredBook.cover}
+                <div className="relative">
+  <div className="absolute inset-x-10 -bottom-8 h-10 rounded-full bg-black/20 blur-2xl" />
+
+  <PremiumBook3D
+  cover={featuredBook.cover}
   alt={featuredBook.title}
-                  className="w-full max-w-md drop-shadow-[0_40px_60px_rgba(44,36,32,0.25)]"
-                />
-              </div>
-            </CursorDrift>
-          </ParallaxLayer>
+/>
+
+  <div
+    className="
+      pointer-events-none
+      absolute
+      inset-0
+      rounded-[10px]
+      bg-gradient-to-br
+      from-white/30
+      via-transparent
+      to-transparent
+    "
+  />
+</div>
+                     </div>
+                   </CursorDrift>
+                 </MouseTilt>
+               </Floating>
+            </ParallaxLayer>
         </div>
 
         {/* headline block — top-right, RTL primary reading direction */}

@@ -138,3 +138,103 @@ export function CursorDrift({
   );
 }
 
+export const LuxurySpring = {
+  type: "spring",
+  stiffness: 120,
+  damping: 18,
+  mass: 0.9,
+};
+
+export function Floating({
+  children,
+  amplitude = 8,
+  duration = 6,
+  className = "",
+}: {
+  children: ReactNode;
+  amplitude?: number;
+  duration?: number;
+  className?: string;
+}) {
+  const reduced = useReducedMotion();
+
+  if (reduced) {
+    return <div className={className}>{children}</div>;
+  }
+
+  return (
+    <motion.div
+      className={className}
+      animate={{
+        y: [-amplitude, amplitude, -amplitude],
+      }}
+      transition={{
+        duration,
+        repeat: Infinity,
+        ease: "easeInOut",
+      }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+export function MouseTilt({
+  children,
+  className = "",
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotion();
+
+  useEffect(() => {
+    if (reduced || !ref.current) return;
+
+    const el = ref.current;
+
+    const handleMove = (e: MouseEvent) => {
+      const rect = el.getBoundingClientRect();
+
+      const x = (e.clientX - rect.left) / rect.width;
+      const y = (e.clientY - rect.top) / rect.height;
+
+      const rotateY = (x - 0.5) * 8;
+      const rotateX = (0.5 - y) * 8;
+
+      el.style.transform = `
+        perspective(1200px)
+        rotateX(${rotateX}deg)
+        rotateY(${rotateY}deg)
+      `;
+    };
+
+    const reset = () => {
+      el.style.transform =
+        "perspective(1200px) rotateX(0deg) rotateY(0deg)";
+    };
+
+    el.addEventListener("mousemove", handleMove);
+    el.addEventListener("mouseleave", reset);
+
+    return () => {
+      el.removeEventListener("mousemove", handleMove);
+      el.removeEventListener("mouseleave", reset);
+    };
+  }, [reduced]);
+
+  return (
+    <div
+      ref={ref}
+      className={className}
+      style={{
+        transformStyle: "preserve-3d",
+        transition: "transform .35s cubic-bezier(.16,1,.3,1)",
+        willChange: "transform",
+      }}
+    >
+      {children}
+    </div>
+  );
+}
