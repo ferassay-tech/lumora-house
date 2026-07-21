@@ -1,0 +1,57 @@
+.hero-scene {
+  position: relative;
+  width: 100%;
+  height: 100svh;
+  min-height: 640px;
+  overflow: hidden;
+  background-color: #f6efe1;
+  isolation: isolate;
+}
+
+.hero-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+  pointer-events: none;
+}
+
+.hero-layer img,
+.hero-layer picture {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  user-select: none;
+}
+
+.hero-content-layer {
+  position: relative;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.hero-content-layer > * {
+  pointer-events: auto;
+}
+
+.hero-heading {
+  font-family: "Amiri", "Noto Naskh Arabic", "Georgia", serif;
+  letter-spacing: 0.01em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-scene * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-scene {
+    height: 100svh;
+    min-height: 560px;
+  }
+}

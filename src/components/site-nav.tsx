@@ -34,8 +34,12 @@ export function SiteNav() {
       }`}
     >
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-10">
-        <Link to="/" className="flex items-center gap-2.5">
-          <LogoMark className="h-9 w-9 text-gold" />
+        <Link to="/" className="flex items-center gap-1">
+          <img
+            src="/logos/lumora-logo-signature.png"
+           alt="دار لومورا"
+           className="h-16 w-16 object-contain transition-transform duration-300 hover:scale-105"
+           />
           <span className="font-logotype text-2xl tracking-wide text-ink">
             دار لومورا
           </span>
@@ -115,19 +119,16 @@ function NavLink({ to, label, active }: { to: string; label: string; active: boo
     </Link>
   );
 }
-
-export function LogoMark({ className = "" }: { className?: string }) {
+export function LogoMark({
+  className = "",
+}: {
+  className?: string;
+}) {
   return (
-    <svg viewBox="0 0 40 40" fill="none" className={className} aria-hidden="true">
-      <path
-        d="M20 4C11 4 4 11 4 20s7 16 16 16 16-7 16-16"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-      <path d="M20 12v16M13 20h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      <circle cx="20" cy="20" r="2" fill="currentColor" />
-    </svg>
+    <img
+      src="/logos/lumora-logo-signature.png"
+      alt="دار لومورا"
+      className={className}
+    />
   );
 }
-

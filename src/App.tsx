@@ -14,13 +14,19 @@ import TermsPage from "./pages/TermsPage";
 import SearchPage from "./pages/SearchPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import ScrollToTop from "./components/ScrollToTop";
+import { CheckoutProvider } from "./context/CheckoutContext";
+
+import CheckoutPage from "./pages/CheckoutPage";
+import PaymentMethodPage from "./pages/PaymentMethodPage";
+import OrderReceivedPage from "./pages/OrderReceivedPage";
 
 export default function App() {
   return (
     <BrowserRouter>
+    <CheckoutProvider>
     <ScrollToTop />
-    
-      <Routes>
+
+    <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/books" element={<BooksIndexPage />} />
         <Route path="/books/:slug" element={<BookPage />} />
@@ -34,9 +40,13 @@ export default function App() {
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/search" element={<SearchPage />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/payment/:method" element={<PaymentMethodPage />} />
+        <Route path="/order-received" element={<OrderReceivedPage />} />
         <Route path="*" element={<NotFoundPage />} />
-      </Routes>
-    </BrowserRouter>
+     </Routes>
+  </CheckoutProvider>
+</BrowserRouter>
   );
 }
 

@@ -6,6 +6,18 @@ import {Reveal,ParallaxLayer,CursorDrift,Floating,MouseTilt,} from "../component
 import { books } from "../lib/content";
 import { StructuredData } from "../components/StructuredData";
 import PremiumBook3D from "../components/PremiumBook3D";
+import { HeroBackground } from "../components/hero/HeroBackground";
+import { HeroClouds } from "../components/hero/HeroClouds";
+import { HeroLight } from "../components/hero/HeroLight";
+import { HeroParticles } from "../components/hero/HeroParticles";
+import { HeroBirds } from "../components/hero/HeroBirds";
+
+import {
+  useMouseParallax,
+  useReducedMotion,
+} from "../components/hero/MouseParallax";
+
+import { useRef } from "react";
 
 const featuredBook = books.find((b) => b.featured)!;
 
@@ -33,10 +45,33 @@ export default function HomePage() {
 }
 
 function HeroSection() {
+  const containerRef = useRef<HTMLElement | null>(null);
+  const reducedMotion = useReducedMotion();
+  const { x, y } = useMouseParallax({
+   containerRef,
+   disabled: reducedMotion,
+  });
   return (
-    <section className="relative overflow-hidden px-6 pb-24 pt-14 lg:px-10 lg:pb-32 lg:pt-20">
-      {/* background watercolor plate, muted */}
-      <div className="pointer-events-none absolute inset-0">
+<section
+  ref={containerRef}
+  className="relative overflow-hidden px-6 pb-24 pt-14 lg:px-10 lg:pb-32 lg:pt-20"
+>
+  <HeroBackground
+    x={x}
+    y={y}
+    reducedMotion={reducedMotion}
+  />
+
+  <HeroClouds
+    x={x}
+    y={y}
+    delay={0.15}
+    reducedMotion={reducedMotion}
+  />
+
+  {/* background watercolor plate, muted */}
+  <div className="pointer-events-none absolute inset-0">
+    ...
         <div className="absolute inset-0 bg-gradient-to-b from-ivory via-ivory/95 to-ivory" />
       </div>
 

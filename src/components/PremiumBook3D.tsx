@@ -40,6 +40,9 @@ const PremiumBook3D: React.FC<PremiumBook3DProps> = ({ cover, alt }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
   const [isBookOpen, setIsBookOpen] = useState(false);
+  const isMobile =
+  typeof window !== "undefined" &&
+  window.matchMedia("(hover: none), (pointer: coarse)").matches;
   const openTimer = useRef<number | null>(null);
 
   const mouseX = useMotionValue(0);
@@ -89,19 +92,24 @@ const PremiumBook3D: React.FC<PremiumBook3DProps> = ({ cover, alt }) => {
   return (
     <div
       ref={containerRef}
-      onMouseMove={handleMouseMove}
-      onMouseEnter={() => {
-  setIsHovered(true);
+      onMouseMove={isMobile ? undefined : handleMouseMove}
 
-  if (openTimer.current) {
-    clearTimeout(openTimer.current);
-  }
+onMouseEnter={
+  isMobile
+    ? undefined
+    : () => {
+        setIsHovered(true);
 
-  openTimer.current = window.setTimeout(() => {
-    setIsBookOpen(true);
-  }, 250);
-}}
-      onMouseLeave={handleMouseLeave}
+        if (openTimer.current) {
+          clearTimeout(openTimer.current);
+        }
+
+        openTimer.current = window.setTimeout(() => {
+          setIsBookOpen(true);
+        }, 250);
+      }
+}
+      onMouseLeave={isMobile ? undefined : handleMouseLeave}
       style={{
         width: CONTAINER_WIDTH,
         height: CONTAINER_HEIGHT,
