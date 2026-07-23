@@ -2,11 +2,9 @@ import { useEffect, useRef, useState, type ReactNode, type CSSProperties } from 
 import { motion, useReducedMotion } from "motion/react";
 
 /**
- * Screenshot-safe reveal: animates transform + opacity FROM a visible-ish
- * state ON MOUNT (never gated behind IntersectionObserver / whileInView), so
- * a full-page headless screenshot always shows every section already
- * resolved-ish. Adds a small scroll-linked stagger via CSS transition-delay
- * keyed off an index, not off visibility.
+ * Scroll-triggered reveal: animates transform + opacity as each instance
+ * enters the viewport (once), so sections come to life in pace with
+ * scrolling instead of all resolving together at mount.
  */
 export function Reveal({
   children,
@@ -36,7 +34,8 @@ export function Reveal({
     <MotionTag
       className={className}
       initial={{ opacity: 0.001, y }}
-      animate={{ opacity: 1, y: 0 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.7, delay, ease: [0.16, 1, 0.3, 1] }}
     >
       {children}

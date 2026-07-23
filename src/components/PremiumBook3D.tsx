@@ -5,6 +5,7 @@ import {
   useMotionTemplate,
   useSpring,
   useTransform,
+  useReducedMotion,
 } from "framer-motion";
 
 interface PremiumBook3DProps {
@@ -36,6 +37,11 @@ const STACK_PAGES = [
   "#e0d4b2",
 ];
 
+// Small fixed per-sheet jitter — deterministic, not random — so the fixed
+// paper stack reads as naturally uneven compressed paper instead of a
+// perfectly uniform mathematical progression.
+const PAGE_JITTER = [0.35, -0.2, 0.45, -0.3, 0.2, -0.4, 0.3, -0.15];
+
 const PremiumBook3D: React.FC<PremiumBook3DProps> = ({ cover, alt }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
@@ -43,30 +49,55 @@ const PremiumBook3D: React.FC<PremiumBook3DProps> = ({ cover, alt }) => {
   const isMobile =
   typeof window !== "undefined" &&
   window.matchMedia("(hover: none), (pointer: coarse)").matches;
+  const reducedMotion = useReducedMotion();
   const openTimer = useRef<number | null>(null);
 
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [10, -10]), {
-    stiffness: 150,
-    damping: 20,
-    mass: 0.6,
-  });
-  const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-14, 14]), {
-    stiffness: 150,
-    damping: 20,
-    mass: 0.6,
-  });
+  // Heavier mass with stiffness/damping scaled to preserve the same ~0.83
+  // damping ratio (so the settle stays just as restrained, non-bouncy) while
+  // dropping the natural frequency ~30% — the book now visibly lags behind
+  // the cursor and takes longer to stop, like an object with real mass
+  // rather than a UI layer tracking a pointer.
+  const TILT_SPRING = { stiffness: 110, damping: 22, mass: 1.6 };
+  const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [10, -10]), TILT_SPRING);
+  const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-14, 14]), TILT_SPRING);
 
   const shadowX = useTransform(rotateY, [-14, 14], [18, -18]);
   const shadowY = useTransform(rotateX, [-10, 10], [-14, 14]);
 
+  // Shadow softens, grows and lightens with tilt magnitude — approximates
+  // the book lifting slightly at its tilted edge instead of a shadow that
+  // only slides beneath a perfectly flat surface.
+  const tiltMagnitude = useTransform(
+    [rotateX, rotateY],
+    ([rx, ry]: number[]) => Math.min(1, (Math.abs(rx) + Math.abs(ry)) / 24)
+  );
+  const shadowScale = useTransform(tiltMagnitude, [0, 1], [1, 1.15]);
+  const shadowOpacity = useTransform(tiltMagnitude, [0, 1], [1, 0.7]);
+  const shadowBlurPx = useTransform(tiltMagnitude, [0, 1], [16, 26]);
+  const shadowBlur = useMotionTemplate`blur(${shadowBlurPx}px)`;
+
   const lightXRaw = useTransform(mouseX, [-0.5, 0.5], [25, 75]);
   const lightYRaw = useTransform(mouseY, [-0.5, 0.5], [20, 80]);
-  const lightX = useSpring(lightXRaw, { stiffness: 120, damping: 24 });
-  const lightY = useSpring(lightYRaw, { stiffness: 120, damping: 24 });
+  const REFLECTION_SPRING = { stiffness: 100, damping: 22, mass: 0.8 };
+  const lightX = useSpring(lightXRaw, REFLECTION_SPRING);
+  const lightY = useSpring(lightYRaw, REFLECTION_SPRING);
   const reflectionPosition = useMotionTemplate`${lightX}% ${lightY}%`;
+  // Specular glint reads brighter at a sharper viewing angle, like a real gloss laminate.
+  const reflectionIntensity = useTransform(tiltMagnitude, [0, 1], [0.5, 1]);
+
+  // Second, broader sheen — tied to tilt (not raw cursor) so it sweeps the
+  // cover more slowly than the glint above, like light rolling across a
+  // laminated hardcover as it turns.
+  const sheenX = useTransform(rotateY, [-14, 14], [30, 70]);
+  const sheenY = useTransform(rotateX, [-10, 10], [70, 30]);
+  const sheenPosition = useMotionTemplate`${sheenX}% ${sheenY}%`;
+
+  // Fore-edge highlight — directional (not just magnitude), like light
+  // catching the laminated edge opposite the spine as the book turns one way.
+  const edgeHighlightOpacity = useTransform(rotateY, [-14, 14], [0.1, 0.5]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = containerRef.current?.getBoundingClientRect();
@@ -92,10 +123,10 @@ const PremiumBook3D: React.FC<PremiumBook3DProps> = ({ cover, alt }) => {
   return (
     <div
       ref={containerRef}
-      onMouseMove={isMobile ? undefined : handleMouseMove}
+      onMouseMove={isMobile || reducedMotion ? undefined : handleMouseMove}
 
 onMouseEnter={
-  isMobile
+  isMobile || reducedMotion
     ? undefined
     : () => {
         setIsHovered(true);
@@ -109,7 +140,7 @@ onMouseEnter={
         }, 250);
       }
 }
-      onMouseLeave={isMobile ? undefined : handleMouseLeave}
+      onMouseLeave={isMobile || reducedMotion ? undefined : handleMouseLeave}
       style={{
         width: CONTAINER_WIDTH,
         height: CONTAINER_HEIGHT,
@@ -131,9 +162,11 @@ onMouseEnter={
           bottom: 8,
           x: shadowX,
           y: shadowY,
+          scale: shadowScale,
+          opacity: shadowOpacity,
           background:
             "radial-gradient(ellipse at center, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.25) 40%, rgba(0,0,0,0) 75%)",
-          filter: "blur(16px)",
+          filter: shadowBlur,
           borderRadius: "50%",
           zIndex: 0,
         }}
@@ -149,9 +182,12 @@ onMouseEnter={
           rotateY,
           zIndex: 1,
         }}
-        animate={{ y: [0, -12, 0] }}
-        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-        whileHover={{ scale: 1.03 }}
+        transition={{ default: { duration: 0.45, ease: [0.22, 1, 0.36, 1] } }}
+        whileHover={
+          reducedMotion
+            ? undefined
+            : { scale: 1.03, transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] } }
+        }
       >
         {/* Back cover / fixed book body */}
         <div
@@ -161,8 +197,9 @@ onMouseEnter={
             transform: `translateZ(-${THICKNESS / 2}px)`,
             borderRadius: "3px 8px 8px 3px",
             background:
-              "linear-gradient(135deg, #2a1c12 0%, #1b120b 50%, #2a1c12 100%)",
-            boxShadow: "inset 0 0 34px rgba(0,0,0,0.6)",
+              "linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.32) 6px, rgba(0,0,0,0.42) 8px, rgba(255,255,255,0.08) 10px, transparent 14px, transparent 100%), linear-gradient(135deg, #2a1c12 0%, #1b120b 50%, #2a1c12 100%)",
+            boxShadow:
+              "inset 0 0 34px rgba(0,0,0,0.6), inset -3px -3px 4px rgba(0,0,0,0.25), inset 0 3px 4px rgba(0,0,0,0.25)",
           }}
         />
 
@@ -177,8 +214,9 @@ onMouseEnter={
             transformOrigin: "right center",
             transform: "rotateY(-90deg)",
             background:
-              "linear-gradient(90deg, #120b06 0%, #3a2718 45%, #1b120b 100%)",
-            boxShadow: "inset -4px 0 12px rgba(0,0,0,0.5)",
+              "linear-gradient(90deg, #0d0805 0%, #1b120b 12%, #2e1e12 30%, #43301c 48%, #3a2718 62%, #1f140c 85%, #0d0805 100%)",
+            boxShadow:
+              "inset -4px 0 12px rgba(0,0,0,0.5), inset 4px 0 12px rgba(0,0,0,0.5)",
             borderRadius: "3px 0 0 3px",
           }}
         />
@@ -193,8 +231,11 @@ onMouseEnter={
             height: HEIGHT - 6,
             transformOrigin: "left center",
             transform: "rotateY(90deg)",
+            // Irregular, low-alpha tonal drift layered over the fine sheet
+            // repeat below — breaks the perfectly periodic look so the
+            // fore-edge reads as compressed paper fiber, not a printed strip.
             background:
-              "repeating-linear-gradient(180deg, #f4ecd8 0px, #f4ecd8 2px, #e2d7bd 2px, #e2d7bd 3px)",
+              "linear-gradient(178deg, rgba(0,0,0,0.035) 0%, rgba(255,255,255,0.025) 9%, rgba(0,0,0,0.02) 17%, rgba(255,255,255,0.03) 26%, rgba(0,0,0,0.025) 38%, rgba(255,255,255,0.02) 51%, rgba(0,0,0,0.03) 64%, rgba(255,255,255,0.025) 76%, rgba(0,0,0,0.02) 88%, rgba(255,255,255,0.03) 100%), repeating-linear-gradient(180deg, #f7f1e3 0px, #f2ead9 1.2px, #ede3cf 2.1px, #f2ead9 3px, #f7f1e3 4.4px)",
             boxShadow: "inset 0 0 9px rgba(0,0,0,0.25)",
           }}
         />
@@ -210,7 +251,7 @@ onMouseEnter={
             transformOrigin: "top center",
             transform: "rotateX(-90deg)",
             background:
-              "repeating-linear-gradient(90deg, #f4ecd8 0px, #f4ecd8 2px, #e2d7bd 2px, #e2d7bd 3px)",
+              "repeating-linear-gradient(90deg, #f7f1e3 0px, #f2ead9 1.2px, #ede3cf 2.1px, #f2ead9 3px, #f7f1e3 4.4px)",
             boxShadow: "inset 0 0 9px rgba(0,0,0,0.25)",
           }}
         />
@@ -225,22 +266,37 @@ onMouseEnter={
         >
           {STACK_PAGES.map((color, i) => {
             const depthStep = (THICKNESS - 8) / (STACK_PAGES.length + 2);
-            const zPos = THICKNESS / 2 - 10 - (i + 1) * depthStep;
-            const inset = 2.5 + i * 0.5;
+            // Starts one page-step below the innermost moving sheet (at
+            // THICKNESS/2 - 7) so the fixed stack picks up where it leaves
+            // off, instead of leaving a hollow gap in the page block.
+            const zPos = THICKNESS / 2 - 7 - (i + 1) * depthStep;
+            const insetBase = 2.5 + i * 0.5;
+            const jitter = PAGE_JITTER[i % PAGE_JITTER.length];
+            const shadowStrength = (0.14 + Math.abs(jitter) * 0.06).toFixed(2);
+            // Ambient-occlusion-style darkening that ramps smoothly with
+            // depth (shallow near the moving sheets, deepest near the back
+            // cover) instead of identical flat shading on every layer — so
+            // the stack reads as one continuously shaded mass rather than a
+            // handful of equally-lit, individually visible sheets.
+            const occlusion = i / (STACK_PAGES.length - 1);
+            const occlusionAlpha = (0.04 + occlusion * 0.18).toFixed(2);
+            const occlusionBlur = (6 + occlusion * 6).toFixed(1);
             return (
               <div
                 key={i}
                 style={{
                   position: "absolute",
-                  top: inset,
-                  left: inset,
-                  right: inset,
-                  bottom: inset,
+                  top: insetBase + jitter,
+                  // Spine side (left): heavily damped — pages read as pressed
+                  // tight and bound. Fore-edge (right): amplified — the same
+                  // jitter values now read as the freer, unbound edge.
+                  left: insetBase - jitter * 0.15,
+                  right: insetBase + jitter * 0.9,
+                  bottom: insetBase - jitter,
                   transform: `translateZ(${zPos}px)`,
                   background: `linear-gradient(135deg, ${color} 0%, ${color} 60%, #e0d4b2 100%)`,
                   borderRadius: "1px 6px 6px 1px",
-                  boxShadow:
-                    "0 1px 2px rgba(0,0,0,0.18), inset 0 0 6px rgba(0,0,0,0.04)",
+                  boxShadow: `0 1px 2px rgba(0,0,0,${shadowStrength}), inset 0 0 ${occlusionBlur}px rgba(0,0,0,${occlusionAlpha})`,
                 }}
               />
             );
@@ -332,8 +388,8 @@ onMouseEnter={
             z: THICKNESS / 2,
             overflow: "hidden",
             boxShadow:
-            "0 8px 18px rgba(0,0,0,0.28), inset 0 0 0 1px rgba(255,255,255,0.04)",
-           
+            "0 8px 18px rgba(0,0,0,0.28), inset 0 0 0 1px rgba(255,255,255,0.04), inset -3px -3px 4px rgba(0,0,0,0.22), inset 0 3px 4px rgba(0,0,0,0.22)",
+
           }}
           animate={{
             rotateY: isBookOpen ? COVER_ANGLE : 0,
@@ -354,6 +410,7 @@ onMouseEnter={
                 "radial-gradient(circle, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.06) 35%, rgba(255,255,255,0) 60%)",
               backgroundSize: "200% 200%",
               backgroundPosition: reflectionPosition,
+              opacity: reflectionIntensity,
               mixBlendMode: "screen",
               pointerEvents: "none",
             }}
@@ -372,18 +429,20 @@ onMouseEnter={
     userSelect: "none",
   }}
 />
-          {/* Static diagonal sheen */}
-          <div
+          {/* Moving diagonal sheen — tied to tilt, sweeps slower than the glint above */}
+          <motion.div
             style={{
               position: "absolute",
               inset: 0,
-              background:
+              backgroundImage:
              "linear-gradient(115deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.05) 20%, rgba(255,255,255,0) 42%, rgba(255,255,255,0) 65%, rgba(255,255,255,0.07) 85%, rgba(255,255,255,0.07) 100%)",
+              backgroundSize: "220% 220%",
+              backgroundPosition: sheenPosition,
               mixBlendMode: "overlay",
               pointerEvents: "none",
             }}
           />
-          {/* Spine-side edge shading */}
+          {/* Spine-side hinge groove — the crease where a case-bound board meets the spine */}
           <div
             style={{
               position: "absolute",
@@ -392,7 +451,7 @@ onMouseEnter={
               bottom: 0,
               width: 12,
               background:
-                "linear-gradient(90deg, rgba(0,0,0,0.38), rgba(0,0,0,0))",
+                "linear-gradient(90deg, rgba(0,0,0,0.20) 0%, rgba(0,0,0,0.30) 5px, rgba(0,0,0,0.40) 7px, rgba(255,255,255,0.10) 9px, rgba(0,0,0,0) 12px)",
               pointerEvents: "none",
             }}
           />
