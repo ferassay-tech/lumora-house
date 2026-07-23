@@ -1,5 +1,3 @@
-import { useRef } from "react";
-import { useMotionValue } from "framer-motion";
 import { Link } from "react-router-dom";
 import { PageShell } from "../components/page-shell";
 import { GoldDivider, CornerFlourish, ArchFrame, QuoteMark, IconBook, IconHeart, IconOpenHands } from "../components/ornaments";
@@ -8,24 +6,13 @@ import {Reveal,ParallaxLayer,CursorDrift,Floating,MouseTilt,} from "../component
 import { books } from "../lib/content";
 import { StructuredData } from "../components/StructuredData";
 import PremiumBook3D from "../components/PremiumBook3D";
-import { HeroParticles } from "../components/hero/HeroParticles";
-import { HeroLight } from "../components/hero/HeroLight";
-import { HeroClouds } from "../components/hero/HeroClouds";
-import { HeroForeground } from "../components/hero/HeroForeground";
-import { HeroBirds } from "../components/hero/HeroBirds";
-import { useMouseParallax, useReducedMotion } from "../components/hero/MouseParallax";
-import "../components/hero/hero.css";
-
+// Every Hero* atmosphere component (HeroLight, HeroClouds, HeroParticles,
+// HeroBirds, HeroForeground) and the shared ambient mask are temporarily
+// not rendered anywhere on the homepage — components and assets are kept
+// in place on disk, untouched, pending a from-first-principles atmosphere
+// redesign. This is a deliberate, temporary reset, not a permanent removal.
 
 const featuredBook = books.find((b) => b.featured)!;
-
-// Shared ambient mask — used to keep any atmosphere layer (hero or a later
-// echo of it elsewhere on the page) concentrated toward a section's center
-// and faded at its outer edges, instead of an even full-bleed wash. One
-// definition so the same "atmosphere language" reads consistently anywhere
-// it's reused across the homepage.
-const AMBIENT_MASK = "radial-gradient(circle at center, black 0%, black 55%, transparent 95%)";
-const AMBIENT_MASK_STYLE = { maskImage: AMBIENT_MASK, WebkitMaskImage: AMBIENT_MASK };
 
 const BOOK_JSON_LD = JSON.stringify({
   "@context": "https://schema.org",
@@ -51,46 +38,12 @@ export default function HomePage() {
 }
 
 function HeroSection() {
-  const sceneRef = useRef<HTMLElement>(null);
-  const reducedMotion = useReducedMotion();
-  const { x, y } = useMouseParallax({
-    containerRef: sceneRef,
-    disabled: reducedMotion,
-    softness: "soft",
-  });
-
-  // Unifies the five atmosphere layers into one continuous scene centered
-  // on the book + headline, fading only at the section's outer edges —
-  // wider and softer than a tight clip so the layers read as one shared
-  // atmosphere instead of separate small islands.
-  const focalMaskStyle = AMBIENT_MASK_STYLE;
-
   return (
-    <section
-      ref={sceneRef}
-      className="isolate relative overflow-hidden px-6 pb-14 pt-14 lg:px-10 lg:pb-20 lg:pt-20"
-    >
+    <section className="isolate relative overflow-hidden px-6 pb-14 pt-14 lg:px-10 lg:pb-20 lg:pt-20">
       {/* background watercolor plate, muted — fades into Philosophy's cream by the bottom edge so the two sections read as one continuous scene */}
 <div className="pointer-events-none absolute inset-0">
   <div className="absolute inset-0 bg-gradient-to-b from-ivory via-ivory to-cream" />
 </div>
-
-      {/* premium ambient scene — five layers tuned to read as one cohesive atmosphere, fade in after content settles, stay behind everything */}
-      <div className="absolute inset-0 opacity-[0.16]" style={focalMaskStyle}>
-        <HeroClouds x={x} y={y} reducedMotion={reducedMotion} delay={1} />
-      </div>
-      <div className="absolute inset-0 opacity-[0.26]" style={focalMaskStyle}>
-        <HeroLight x={x} y={y} reducedMotion={reducedMotion} delay={1.4} />
-      </div>
-      <div className="absolute inset-0 opacity-[0.14]" style={focalMaskStyle}>
-        <HeroParticles x={x} y={y} reducedMotion={reducedMotion} delay={2} />
-      </div>
-      <div className="absolute inset-0 opacity-[0.12]" style={focalMaskStyle}>
-        <HeroBirds x={x} y={y} reducedMotion={reducedMotion} delay={2.2} />
-      </div>
-      <div className="absolute inset-0 opacity-[0.16]" style={focalMaskStyle}>
-        <HeroForeground x={x} y={y} reducedMotion={reducedMotion} delay={2.4} />
-      </div>
 
       <div className="relative z-10 mx-auto grid max-w-7xl grid-cols-1 items-center gap-16 lg:grid-cols-[0.9fr_1.1fr]">
         {/* book cutout — bottom-left per brief's editorial-offset architecture */}
@@ -123,7 +76,7 @@ function HeroSection() {
   {/* Shadow under the book */}
   <div className="absolute inset-x-10 -bottom-8 h-10 rounded-full bg-black/20 blur-2xl" />
 
-  {/* Subtle rim light — separates the book from the now-concentrated ambient atmosphere behind it */}
+  {/* Subtle rim light */}
   <div className="pointer-events-none absolute inset-0 -z-10 rounded-[16px] bg-gold/15 blur-2xl" />
 
   <PremiumBook3D
@@ -197,16 +150,8 @@ function HeroSection() {
 }
 
 function PhilosophySection() {
-  const zero = useMotionValue(0);
-  const reducedMotion = useReducedMotion();
-
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-cream via-cream to-ivory px-6 py-14 lg:px-10 lg:py-20">
-      {/* quiet echo of the hero's gold-dust atmosphere — carries the hero's world past its own edge instead of stopping cold */}
-      <div className="absolute inset-0 opacity-[0.12]" style={AMBIENT_MASK_STYLE}>
-        <HeroParticles x={zero} y={zero} reducedMotion={reducedMotion} delay={0} />
-      </div>
-
       <div className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-14">
         <Reveal className="relative z-10">
           <div className="flex items-center gap-3">
@@ -222,7 +167,7 @@ function PhilosophySection() {
           </p>
         </Reveal>
 
-        {/* the gold pattern becomes the section's real visual anchor — bleeding to the edge, not a boxed thumbnail */}
+        {/* the gold pattern is the section's real visual anchor — bleeding to the edge, entering once and staying settled within this section */}
         <Reveal delay={0.15} className="relative">
           <div className="relative -mx-6 aspect-[4/5] overflow-hidden rounded-[10px] lg:mx-0 lg:-mr-16 lg:aspect-auto lg:h-[36rem]">
             <img
@@ -241,39 +186,29 @@ function PhilosophySection() {
 }
 
 function FeaturedBookSection() {
-  const zero = useMotionValue(0);
-  const reducedMotion = useReducedMotion();
-
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-ivory via-ivory to-cream px-6 py-16 lg:px-10 lg:py-24">
-      {/* quiet echo of the hero's gold-dust atmosphere — same treatment as Philosophy, carrying the world forward */}
-      <div className="absolute inset-0 opacity-[0.08]" style={AMBIENT_MASK_STYLE}>
-        <HeroParticles x={zero} y={zero} reducedMotion={reducedMotion} delay={0} />
-      </div>
-
       <div className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-16 lg:grid-cols-2">
         <Reveal className="relative order-2 lg:order-1">
-          <div className="relative">
-            <div className="relative overflow-hidden rounded-[10px] shadow-[0_30px_60px_-25px_rgba(44,36,32,0.35)]">
-              <img
-                src="/assets/kuni-hajar-collection.webp"
-                alt=""
-                className="h-[28rem] w-full object-cover lg:h-[34rem]"
-                style={{ objectPosition: "30% 35%" }}
-                loading="lazy"
-              />
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/25 via-transparent to-transparent" />
-            </div>
-            <CornerFlourish className="pointer-events-none absolute right-4 top-4 h-14 w-14 text-ivory/80" />
-            {/* the real product, kept accurate — floated as a framed detail over the lifestyle backdrop */}
-            <div className="absolute -bottom-6 left-6 w-28 overflow-hidden rounded-[6px] border-2 border-ivory shadow-[0_15px_30px_-10px_rgba(44,36,32,0.45)] sm:w-32">
-              <img
-                src={featuredBook.cover}
-                alt={featuredBook.title}
-                className="h-full w-full object-cover"
-                loading="lazy"
-              />
-            </div>
+          <div className="relative overflow-hidden rounded-[10px] shadow-[0_30px_60px_-25px_rgba(44,36,32,0.35)]">
+            <img
+              src="/assets/kuni-hajar-collection.webp"
+              alt=""
+              className="h-[28rem] w-full object-cover lg:h-[34rem]"
+              style={{ objectPosition: "30% 35%" }}
+              loading="lazy"
+            />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/25 via-transparent to-transparent" />
+          </div>
+          <CornerFlourish className="pointer-events-none absolute right-4 top-4 h-14 w-14 text-ivory/80" />
+          {/* the real product, kept accurate — floated as a framed detail over the lifestyle backdrop */}
+          <div className="absolute -bottom-6 left-6 w-28 overflow-hidden rounded-[6px] border-2 border-ivory shadow-[0_15px_30px_-10px_rgba(44,36,32,0.45)] sm:w-32">
+            <img
+              src={featuredBook.cover}
+              alt={featuredBook.title}
+              className="h-full w-full object-cover"
+              loading="lazy"
+            />
           </div>
         </Reveal>
 
@@ -308,16 +243,8 @@ function FeaturedBookSection() {
 }
 
 function BooksGridSection() {
-  const zero = useMotionValue(0);
-  const reducedMotion = useReducedMotion();
-
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-cream via-cream to-mauve/25 px-6 py-16 lg:px-10 lg:py-24">
-      {/* same atmosphere thread continuing through the library */}
-      <div className="absolute inset-0 opacity-[0.1]" style={AMBIENT_MASK_STYLE}>
-        <HeroParticles x={zero} y={zero} reducedMotion={reducedMotion} delay={0} />
-      </div>
-
       <div className="relative mx-auto max-w-7xl">
         <Reveal className="text-center">
           <p className="text-sm uppercase tracking-[0.25em] text-gold">أحدث الإصدارات</p>
@@ -369,27 +296,19 @@ function BooksGridSection() {
 }
 
 function QuoteSection() {
-  const zero = useMotionValue(0);
-  const reducedMotion = useReducedMotion();
-
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-mauve/25 via-mauve/25 to-ivory px-6 py-20 lg:px-10 lg:py-24">
-      {/* a considered pause — the hero's light echoed in miniature behind the quote */}
-      <div className="absolute inset-0 opacity-[0.22]" style={AMBIENT_MASK_STYLE}>
-        <HeroLight x={zero} y={zero} reducedMotion={reducedMotion} delay={0} />
-      </div>
-
       <div className="relative mx-auto max-w-3xl rounded-[10px] border border-mauve/40 bg-ivory/50 px-6 py-14 text-center shadow-[0_20px_50px_-30px_rgba(44,36,32,0.35)] backdrop-blur-sm lg:px-14 lg:py-16">
         <Reveal>
           <QuoteMark className="mx-auto h-14 w-20 text-gold" />
         </Reveal>
         <Reveal delay={0.1}>
-          <p className="mt-8 text-balance font-display text-4xl leading-relaxed text-ink md:text-5xl">
+          <blockquote className="mt-8 text-balance font-display text-4xl leading-relaxed text-ink md:text-5xl">
             الكتاب الذي يصل إلى قلبك، يبقى فيه أطول من أي كلمة تُقال.
-          </p>
+          </blockquote>
         </Reveal>
         <Reveal delay={0.18}>
-          <p className="mt-6 text-sm text-ink-soft">مها نصر، مؤلفة كوني هاجر</p>
+          <cite className="mt-6 block text-sm not-italic text-ink-soft">مها نصر، مؤلفة كوني هاجر</cite>
         </Reveal>
       </div>
     </section>
@@ -397,16 +316,8 @@ function QuoteSection() {
 }
 
 function FinalCTASection() {
-  const zero = useMotionValue(0);
-  const reducedMotion = useReducedMotion();
-
   return (
     <section className="relative overflow-hidden px-6 py-16 lg:px-10 lg:py-20">
-      {/* the atmosphere that opened the page returns once more to close it */}
-      <div className="absolute inset-0 opacity-[0.1]" style={AMBIENT_MASK_STYLE}>
-        <HeroParticles x={zero} y={zero} reducedMotion={reducedMotion} delay={0} />
-      </div>
-
       <div className="relative mx-auto grid max-w-5xl grid-cols-1 items-center gap-10 rounded-[10px] border border-beige bg-cream/60 p-10 text-center sm:grid-cols-3 lg:p-14">
         <CornerFlourish className="pointer-events-none absolute right-4 top-4 h-12 w-12 text-gold/50" />
         <CornerFlourish className="pointer-events-none absolute bottom-4 left-4 h-12 w-12 rotate-180 text-gold/50" />

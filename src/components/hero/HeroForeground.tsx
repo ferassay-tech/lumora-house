@@ -26,12 +26,21 @@ export const HeroForeground: React.FC<HeroForegroundProps> = ({
       animate={{ opacity: 1 }}
       transition={{ duration: 1.1, ease: "easeOut", delay }}
     >
+      {/*
+        This layer is now confined to a single bottom-left corner box (see
+        the wrapper in HomePage.tsx) instead of spanning the full width, so
+        it reads as one editorial corner detail rather than a symmetric
+        two-corner band. object-position biases the crop toward the
+        left-bottom cluster in the source artwork, isolating that one
+        corner instead of showing both.
+      */}
       <img
         src={heroForeground}
         alt=""
         aria-hidden="true"
         loading="lazy"
         decoding="async"
+        style={{ objectPosition: "left bottom" }}
       />
     </motion.div>
   );

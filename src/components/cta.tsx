@@ -18,7 +18,7 @@ export function StampCTA({
   children: ReactNode;
   className?: string;
 }) {
-  const classes = `group relative inline-flex items-center gap-3 rounded-[10px] bg-gold px-8 py-4 text-base font-medium text-ink shadow-[0_10px_30px_-12px_rgba(185,148,81,0.55)] transition-all duration-200 ease-out hover:bg-gold-deep hover:shadow-[0_14px_34px_-10px_rgba(156,122,60,0.6)] active:translate-y-[2px] active:scale-[0.98] active:skew-x-[0.5deg] ${className}`;
+  const classes = `group relative inline-flex items-center gap-3 rounded-[10px] bg-gold px-8 py-4 text-base font-medium text-ink shadow-[0_10px_30px_-12px_rgba(185,148,81,0.55)] transition-all duration-200 ease-out hover:bg-gold-deep hover:shadow-[0_14px_34px_-10px_rgba(156,122,60,0.6)] active:translate-y-[2px] active:scale-[0.98] active:skew-x-[0.5deg] focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink ${className}`;
 
   const inner = (
     <>
@@ -65,7 +65,10 @@ export function UnderlineLink({
   className?: string;
 }) {
   return (
-    <Link to={to} className={`group relative inline-flex items-center gap-2 text-gold ${className}`}>
+    <Link
+      to={to}
+      className={`group relative inline-flex items-center gap-2 text-gold focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-deep ${className}`}
+    >
       <span className="relative">
         {children}
         <svg
